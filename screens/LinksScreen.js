@@ -16,7 +16,8 @@ import {
   Left,
   Body,
   Icon,
-  Button
+  Button,
+  Toast
 } from "native-base";
 
 const RecordingOptions = {
@@ -152,10 +153,19 @@ export default class DeckSwiperAdvancedExample extends Component {
   }
 
   _renderResult() {
-    if (this.state.wordPronouncedCorrectly === null) return null;
-    else if (this.state.wordPronouncedCorrectly === true)
-      return "word correctly pronounced";
-    else return "word wrongly pronounced";
+    if (this.state.wordPronouncedCorrectly === null) {
+      return null;
+    } else if (this.state.wordPronouncedCorrectly === true) {
+      Toast.show({
+        text: "You are correct"
+      });
+      return null
+    } else {
+      Toast.show({
+        text: "Wrongly pronounced, Try Again"
+      });
+      return null
+    }
   }
 
   render() {
