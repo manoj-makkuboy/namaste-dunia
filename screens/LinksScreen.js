@@ -92,6 +92,8 @@ export default class DeckSwiperAdvancedExample extends Component {
     } else {
       this.setState({ wordPronouncedCorrectly: false });
     }
+
+    this._renderResult()
   };
 
   stopRecording = async () => {
@@ -156,6 +158,7 @@ export default class DeckSwiperAdvancedExample extends Component {
     if (this.state.wordPronouncedCorrectly === null) {
       return null;
     } else if (this.state.wordPronouncedCorrectly === true) {
+      this._deckSwiper._root.swipeRight()
       Toast.show({
         text: "You are correct"
       });
@@ -200,9 +203,6 @@ export default class DeckSwiperAdvancedExample extends Component {
                   <CardItem>
                     <Text note>{item.wordToBePronouncedInEnglish}</Text>
                   </CardItem>
-                  <CardItem>
-                    <Text>{this._renderResult()}</Text>
-                  </CardItem>
                 </Card>
               );
             }}
@@ -220,16 +220,11 @@ export default class DeckSwiperAdvancedExample extends Component {
             padding: 15
           }}
         >
-          <Button iconLeft onPress={() => this._deckSwiper._root.swipeLeft()}>
-            <Text>Swipe Left</Text>
-          </Button>
+        
           {this.state.isRecording
             ? this._renderStopButton()
             : this._renderRecordButton()}
 
-          <Button iconRight onPress={() => this._deckSwiper._root.swipeRight()}>
-            <Text>Swipe Right</Text>
-          </Button>
         </View>
       </Container>
     );
