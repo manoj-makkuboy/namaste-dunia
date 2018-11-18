@@ -1,15 +1,23 @@
-import React from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  Button
-} from "react-native";
+import React, { Component } from "react";
+import { ScrollView, StyleSheet, Image } from "react-native";
 import { ExpoLinksView } from "@expo/samples";
 import Expo from "expo";
 import axios from "axios";
+
+import {
+  Container,
+  Header,
+  View,
+  DeckSwiper,
+  Card,
+  CardItem,
+  Thumbnail,
+  Text,
+  Left,
+  Body,
+  Icon,
+  Button
+} from "native-base";
 
 const RecordingOptions = {
   android: {
@@ -35,20 +43,37 @@ const RecordingOptions = {
 
 var recordInstance;
 
-export default class LinksScreen extends React.Component {
-  static navigationOptions = {
-    title: "pronouncation"
-  };
+const cards = [
+  {
+    wordToBePronouncedInHindi: "नमस्ते",
+    wordToBePronouncedInEnglish: "Namaste"
+  },
+  {
+    wordToBePronouncedInHindi: "धन्यवाद",
+    wordToBePronouncedInEnglish: "dhanyavaad"
+  },
+  {
+    wordToBePronouncedInHindi: "अच्छा",
+    wordToBePronouncedInEnglish: "achchha"
+  },
+  {
+    wordToBePronouncedInHindi: "बच्चा",
+    wordToBePronouncedInEnglish: "bachcha"
+  }
+];
+export default class DeckSwiperAdvancedExample extends Component {
+  state = { wordPronouncedCorrectly: null, isRecording: false };
 
-  state = { wordToPronounce: "नमस्ते", wordPronouncedCorrectly: null };
+  wordToPronounce = "";
 
   recordAudio = async () => {
+    this.setState({ isRecording: true });
     recordInstance = new Expo.Audio.Recording();
     try {
       await recordInstance.prepareToRecordAsync(RecordingOptions);
       await recordInstance.startAsync();
 
-      console.log("recording 1 2 3");
+      console.log("recording 3 2 1");
       // You are now recording!
     } catch (error) {
       console.log("recording failed", error);
@@ -61,11 +86,10 @@ export default class LinksScreen extends React.Component {
       recordedSoundBase64
     });
     console.log("response", response.data);
-    if(this.state.wordToPronounce === response.data.message){
-      this.setState({wordPronouncedCorrectly: true})
-    }
-    else{
-      this.setState({wordPronouncedCorrectly: false})
+    if (this.wordToPronounce === response.data.message) {
+      this.setState({ wordPronouncedCorrectly: true });
+    } else {
+      this.setState({ wordPronouncedCorrectly: false });
     }
   };
 
@@ -84,6 +108,8 @@ export default class LinksScreen extends React.Component {
     console.log("recorded base 64", recordedSoundBase64);
 
     this.recognizeAudio(recordedSoundBase64);
+
+    this.setState({ isRecording: false });
   };
 
   getAudioRecordingAsync = async () => {
@@ -109,6 +135,22 @@ export default class LinksScreen extends React.Component {
     this.getAudioRecordingAsync();
   }
 
+  _renderRecordButton() {
+    return (
+      <Button iconCenter onPress={this.recordAudio}>
+        <Text>Record</Text>
+      </Button>
+    );
+  }
+
+  _renderStopButton() {
+    return (
+      <Button iconCenter onPress={this.stopRecording}>
+        <Text>Stop</Text>
+      </Button>
+    );
+  }
+
   _renderResult() {
     if (this.state.wordPronouncedCorrectly === null) return null;
     else if (this.state.wordPronouncedCorrectly === true)
@@ -118,31 +160,68 @@ export default class LinksScreen extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <Text>{`pronounce the word ${this.state.wordToPronounce}`}</Text>
-        <Button
-          onPress={this.recordAudio}
-          title="Record"
-          color="#841584"
-          accessibilityLabel="Learn more about this purple button"
-        />
-        <Button
-          onPress={this.stopRecording}
-          title="stop"
-          color="#841584"
-          accessibilityLabel="Learn more about this purple button"
-        />
+      <Container>
+        <Header />
+        <View>
+          <DeckSwiper
+            looping={false}
+            ref={c => (this._deckSwiper = c)}
+            dataSource={cards}
+            renderEmpty={() => (
+              <View style={{ alignSelf: "center" }}>
+                <Text>That was fantastic, Thanks for Trying</Text>
+              </View>
+            )}
+            renderItem={item => {
+              this.wordToPronounce = item.wordToBePronouncedInHindi;
+              return (
+                <Card style={{ elevation: 3 }}>
+                  <CardItem>
+                    <Left>
+                      <Body>
+                        <Text>Say Aloud the below word</Text>
+                      </Body>
+                    </Left>
+                  </CardItem>
+                  <CardItem cardBody />
+                  <CardItem>
+                    <Text>{item.wordToBePronouncedInHindi}</Text>
+                  </CardItem>
+                  <CardItem>
+                    <Text note>{item.wordToBePronouncedInEnglish}</Text>
+                  </CardItem>
+                  <CardItem>
+                    <Text>{this._renderResult()}</Text>
+                  </CardItem>
+                </Card>
+              );
+            }}
+          />
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            flex: 1,
+            position: "absolute",
+            bottom: 50,
+            left: 0,
+            right: 0,
+            justifyContent: "space-between",
+            padding: 15
+          }}
+        >
+          <Button iconLeft onPress={() => this._deckSwiper._root.swipeLeft()}>
+            <Text>Swipe Left</Text>
+          </Button>
+          {this.state.isRecording
+            ? this._renderStopButton()
+            : this._renderRecordButton()}
 
-        <Text>{this._renderResult()}</Text>
-      </View>
+          <Button iconRight onPress={() => this._deckSwiper._root.swipeRight()}>
+            <Text>Swipe Right</Text>
+          </Button>
+        </View>
+      </Container>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 15,
-    backgroundColor: "#fff"
-  }
-});
