@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { ScrollView, StyleSheet, Image } from "react-native";
 import { ExpoLinksView } from "@expo/samples";
-import Expo from "expo";
+import {Audio, FileSystem, Permissions} from "expo";
 import axios from "axios";
 
 import {
@@ -23,16 +23,16 @@ import {
 const RecordingOptions = {
   android: {
     extension: ".m4a",
-    outputFormat: Expo.Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
-    audioEncoder: Expo.Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
+    outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
+    audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
     sampleRate: 16000,
     numberOfChannels: 1,
     bitRate: 128000
   },
   ios: {
     extension: ".caf",
-    outputFormat: Expo.Audio.RECORDING_OPTION_IOS_OUTPUT_FORMAT_LINEARPCM,
-    audioQuality: Expo.Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_HIGH,
+    outputFormat: Audio.RECORDING_OPTION_IOS_OUTPUT_FORMAT_LINEARPCM,
+    audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_HIGH,
     sampleRate: 16000,
     numberOfChannels: 1,
     bitRate: 128000,
@@ -69,7 +69,7 @@ export default class DeckSwiperAdvancedExample extends Component {
 
   recordAudio = async () => {
     this.setState({ isRecording: true });
-    recordInstance = new Expo.Audio.Recording();
+    recordInstance = new Audio.Recording();
     try {
       await recordInstance.prepareToRecordAsync(RecordingOptions);
       await recordInstance.startAsync();
@@ -103,9 +103,9 @@ export default class DeckSwiperAdvancedExample extends Component {
     let stopResponse = await recordInstance.stopAndUnloadAsync();
     console.log("stop response", stopResponse);
 
-    let recordedSoundBase64 = await Expo.FileSystem.readAsStringAsync(
+    let recordedSoundBase64 = await FileSystem.readAsStringAsync(
       recordedSound,
-      { encoding: Expo.FileSystem.EncodingTypes.Base64 }
+      { encoding: FileSystem.EncodingTypes.Base64 }
     );
 
     console.log("recorded base 64", recordedSoundBase64);
@@ -116,16 +116,16 @@ export default class DeckSwiperAdvancedExample extends Component {
   };
 
   getAudioRecordingAsync = async () => {
-    let responseSettingAudio = await Expo.Audio.setAudioModeAsync({
+    let responseSettingAudio = await Audio.setAudioModeAsync({
       allowsRecordingIOS: true,
-      interruptionModeIOS: Expo.Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+      interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
       playsInSilentModeIOS: true,
       shouldDuckAndroid: true,
-      interruptionModeAndroid: Expo.Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+      interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
       playThroughEarpieceAndroid: false
     });
 
-    const { Location, Permissions } = Expo;
+
     const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
     if (status === "granted") {
       return;
@@ -198,7 +198,7 @@ export default class DeckSwiperAdvancedExample extends Component {
                   </CardItem>
                   <CardItem cardBody />
                   <CardItem>
-                    <Text>{item.wordToBePronouncedInHindi}</Text>
+                    <Text style={{fontSize: 45}}>{item.wordToBePronouncedInHindi}</Text>
                   </CardItem>
                   <CardItem>
                     <Text note>{item.wordToBePronouncedInEnglish}</Text>
