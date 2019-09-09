@@ -47,20 +47,29 @@ var recordInstance;
 const cards = [
   {
     wordToBePronouncedInHindi: "नमस्ते",
-    wordToBePronouncedInEnglish: "Namaste"
+    wordToBePronouncedInEnglish: "Namaste",
+    meaningInEnglish: ''
   },
   {
     wordToBePronouncedInHindi: "धन्यवाद",
-    wordToBePronouncedInEnglish: "dhanyavaad"
+    wordToBePronouncedInEnglish: "dhanyavaad",
+    meaningInEnglish: ''
   },
   {
     wordToBePronouncedInHindi: "अच्छा",
-    wordToBePronouncedInEnglish: "achchha"
+    wordToBePronouncedInEnglish: "achchha",
+    meaningInEnglish: ''
   },
   {
     wordToBePronouncedInHindi: "बच्चा",
-    wordToBePronouncedInEnglish: "bachcha"
-  }
+    wordToBePronouncedInEnglish: "bachcha",
+    meaningInEnglish: ''
+  },
+  {
+    wordToBePronouncedInHindi: "मेरा नाम मनोज है",
+    wordToBePronouncedInEnglish: "mera naam manoj hai",
+    meaningInEnglish: ''
+  },
 ];
 export default class DeckSwiperAdvancedExample extends Component {
   state = { wordPronouncedCorrectly: null, isRecording: false };
@@ -83,11 +92,11 @@ export default class DeckSwiperAdvancedExample extends Component {
   };
 
   recognizeAudio = async recordedSoundBase64 => {
-    let response = await axios.post("http://10.10.22.96:5000/todos", {
+    let response = await axios.post("http://localhost:3000/speechToText", {
       recordedSoundBase64
     });
     console.log("response", response.data);
-    if (this.wordToPronounce === response.data.message) {
+    if (this.wordToPronounce === response.data) {
       this.setState({ wordPronouncedCorrectly: true });
     } else {
       this.setState({ wordPronouncedCorrectly: false });
