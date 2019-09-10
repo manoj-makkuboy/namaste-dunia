@@ -23,8 +23,8 @@ import {
 const RecordingOptions = {
   android: {
     extension: ".m4a",
-    outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
-    audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
+    outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_AMR_WB,
+    audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AMR_WB,
     sampleRate: 16000,
     numberOfChannels: 1,
     bitRate: 128000
@@ -92,7 +92,7 @@ export default class DeckSwiperAdvancedExample extends Component {
   };
 
   recognizeAudio = async recordedSoundBase64 => {
-    let response = await axios.post("http://localhost:3000/speechToText", {
+    let response = await axios.post("http://192.168.100.115:3000/speechToText", {
       recordedSoundBase64
     });
     console.log("response", response.data);
